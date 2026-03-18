@@ -16,7 +16,7 @@
 <style>
 /* ═══════════════ TOKENS ═══════════════ */
 :root{
-  --bg:#080f1e; --surf:#0d1a30; --rim:#1a3560; --rim2:#2a4f8a;
+  --bg:#080f1e; --rim:#1a3560;
   --sky:#3ec6f5; --violet:#7c6ff7; --mint:#2dd4a0;
   --amber:#f5b942; --coral:#f07050; --danger:#f26a6a; --gold:#ffd700;
   --text:#e8f4ff; --muted:#7aa0c0;
@@ -44,15 +44,24 @@ html,body{height:100%;overflow:hidden;background:var(--bg);
 
 /* ═══════════════ HOME SCREEN ═══════════════ */
 #home{
-  align-items:center;justify-content:center;
-  padding:20px 16px;gap:20px;text-align:center}
+  align-items:center;
+  padding:clamp(10px,3vw,20px) 16px clamp(14px,3vw,20px);
+  gap:clamp(10px,2.5vw,18px);
+  text-align:center;
+  overflow-y:auto;
+  /* allow scroll on short phones, center on tall ones */
+  justify-content:flex-start;}
+#home::-webkit-scrollbar{display:none}
+@media (min-height:780px){
+  #home{justify-content:center;}
+}
 .home-logo{
-  font-family:'Righteous',cursive;font-size:clamp(36px,10vw,52px);
+  font-family:'Righteous',cursive;font-size:clamp(28px,8vw,48px);
   background:linear-gradient(120deg,var(--sky),var(--violet));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
   filter:drop-shadow(0 2px 16px rgba(62,198,245,.4));line-height:1}
-.home-sub{font-size:11px;font-weight:800;letter-spacing:3px;text-transform:uppercase;
-  color:var(--muted);margin-top:2px}
+.home-sub{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  color:var(--muted);margin-top:1px}
 .home-best{
   display:flex;align-items:center;gap:8px;
   background:rgba(255,255,255,.04);border:1px solid var(--rim);
@@ -65,11 +74,11 @@ html,body{height:100%;overflow:hidden;background:var(--bg);
 .diff-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
 .diff-card{
   border-radius:16px;border:2px solid var(--rim);background:rgba(255,255,255,.04);
-  padding:14px 8px;cursor:pointer;transition:all .18s;text-align:center}
+  padding:clamp(8px,2vw,14px) 8px;cursor:pointer;transition:all .18s;text-align:center}
 .diff-card:hover,.diff-card.sel{border-color:var(--sky);background:rgba(62,198,245,.08);
   box-shadow:0 0 16px rgba(62,198,245,.2)}
 .diff-card.sel{border-color:var(--sky)}
-.diff-icon{font-size:28px;margin-bottom:6px}
+.diff-icon{font-size:clamp(20px,5vw,28px);margin-bottom:4px}
 .diff-name{font-family:'Righteous',cursive;font-size:14px;color:var(--text)}
 .diff-desc{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.4}
 
@@ -78,16 +87,16 @@ html,body{height:100%;overflow:hidden;background:var(--bg);
 .mode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
 .mode-card{
   border-radius:16px;border:2px solid var(--rim);background:rgba(255,255,255,.04);
-  padding:12px 6px;cursor:pointer;transition:all .18s;text-align:center}
+  padding:clamp(7px,2vw,12px) 6px;cursor:pointer;transition:all .18s;text-align:center}
 .mode-card:hover,.mode-card.sel{border-color:var(--violet);background:rgba(124,111,247,.08);
   box-shadow:0 0 16px rgba(124,111,247,.2)}
 .mode-card.sel{border-color:var(--violet)}
-.mode-icon{font-size:22px;margin-bottom:4px}
+.mode-icon{font-size:clamp(16px,4vw,22px);margin-bottom:3px}
 .mode-name{font-family:'Righteous',cursive;font-size:12px;color:var(--text)}
 .mode-desc{font-size:9px;color:var(--muted);margin-top:2px;line-height:1.4}
 
 .btn-play{
-  width:100%;padding:15px;border-radius:var(--r);border:none;
+  width:100%;padding:clamp(10px,3vw,15px);border-radius:var(--r);border:none;
   background:linear-gradient(120deg,var(--sky),var(--violet));color:#080f1e;
   font-family:'Righteous',cursive;font-size:20px;cursor:pointer;
   box-shadow:0 4px 20px rgba(62,198,245,.35);transition:transform .12s,box-shadow .12s}
@@ -97,7 +106,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);
 /* badges preview */
 .badge-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 .badge-mini{
-  width:40px;height:40px;border-radius:50%;
+  width:clamp(32px,8vw,40px);height:clamp(32px,8vw,40px);border-radius:50%;
   background:rgba(255,255,255,.04);border:1.5px solid var(--rim);
   display:flex;align-items:center;justify-content:center;
   font-size:18px;cursor:pointer;transition:all .15s;position:relative}
@@ -118,12 +127,15 @@ html,body{height:100%;overflow:hidden;background:var(--bg);
 .btn-ghost:hover{border-color:var(--violet);color:var(--violet)}
 
 /* ═══════════════ GAME SCREEN ═══════════════ */
-/* 8 children: header|xp|stats|timer|picker|qcard|GRID(1fr)|ctrl */
+/* Flexbox column — .grid gets flex:1 to fill remaining space.
+   Works correctly regardless of whether #timer-wrap is hidden. */
 #game{
-  padding:8px 12px 10px;
-  display:grid;
-  grid-template-rows: auto auto auto auto auto auto 1fr auto;
-  gap:5px;align-items:stretch}
+  padding:env(safe-area-inset-top,8px) 12px env(safe-area-inset-bottom,10px);
+  padding-top:max(8px, env(safe-area-inset-top));
+  padding-bottom:max(10px, env(safe-area-inset-bottom));
+  display:flex;
+  flex-direction:column;
+  gap:clamp(3px,1vh,6px);}
 
 /* header */
 .ghdr{display:flex;align-items:center;justify-content:space-between;gap:6px}
@@ -140,19 +152,17 @@ html,body{height:100%;overflow:hidden;background:var(--bg);
   filter:drop-shadow(0 1px 6px rgba(62,198,245,.3));line-height:1}
 .ghdr-right{display:flex;align-items:center;gap:6px}
 /* sound btn */
-#sndbtn{
+#sndbtn,#sndbtn2{
   width:32px;height:32px;border-radius:var(--pill);
   border:1.5px solid var(--rim);background:rgba(255,255,255,.04);
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;transition:all .2s;flex-shrink:0}
-#sndbtn:hover{border-color:var(--sky);background:rgba(62,198,245,.1)}
-#sndbtn svg{width:15px;height:15px;fill:none;stroke:var(--muted);
+#sndbtn:hover,#sndbtn2:hover{border-color:var(--sky);background:rgba(62,198,245,.1)}
+#sndbtn svg,#sndbtn2 svg{width:15px;height:15px;fill:none;stroke:var(--muted);
   stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:stroke .15s}
-#sndbtn.on svg{stroke:var(--sky)}
-.wave-path{transition:opacity .15s}
-#sndbtn.off .wave-path{opacity:0}
-.mute-x{opacity:0;transition:opacity .15s}
-#sndbtn.off .mute-x{opacity:1}
+/* sound toggle visual handled by JS innerHTML swap */
+#sndbtn.on svg,#sndbtn2.on svg{stroke:var(--sky)}
+#sndbtn.off svg,#sndbtn2.off svg{stroke:var(--muted)}
 /* difficulty badge */
 .diff-badge{
   font-size:10px;font-weight:800;border-radius:var(--pill);
@@ -178,7 +188,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);
 .slbl{font-size:7px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
 .sval{font-family:'Righteous',cursive;font-size:16px;line-height:1.2}
 .sval.sc{color:var(--amber)} .sval.st{color:var(--mint)}
-.sval.bs{color:var(--sky)} .sval.lv{color:var(--gold)}
+.sval.bs{color:var(--sky)}
 /* hearts */
 .hearts{display:flex;gap:3px;justify-content:center;align-items:center;margin-top:1px}
 .heart{font-size:13px;transition:transform .2s}
@@ -234,9 +244,10 @@ html,body{height:100%;overflow:hidden;background:var(--bg);
 .rbtn svg{width:10px;height:10px;flex-shrink:0;fill:none;stroke:currentColor;
   stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
 
-/* 5×5 grid */
+/* 5×5 grid — flex:1 fills all remaining vertical space */
 .grid{display:grid;grid-template-columns:repeat(5,1fr);
-  grid-template-rows:repeat(5,1fr);gap:4px;width:100%;height:100%;min-height:0}
+  grid-template-rows:repeat(5,1fr);gap:4px;width:100%;
+  flex:1;min-height:0;}
 .cell{border-radius:var(--r);border:1.5px solid var(--rim);
   background:rgba(255,255,255,.055);
   display:flex;align-items:center;justify-content:center;
@@ -397,7 +408,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);
 #cvc{position:fixed;inset:0;pointer-events:none;z-index:199}
 
 /* 2-player split */
-.twop-wrap{display:flex;flex-direction:column;gap:6px;height:100%;padding:8px 12px 10px}
+.twop-wrap{display:flex;flex-direction:column;gap:clamp(3px,1vh,6px);height:100%;padding:max(8px,env(safe-area-inset-top)) 12px max(10px,env(safe-area-inset-bottom))}
 .twop-panel{flex:1;border-radius:14px;border:1.5px solid var(--rim);
   background:rgba(255,255,255,.03);overflow:hidden;position:relative}
 .twop-label{position:absolute;top:6px;left:8px;
@@ -509,14 +520,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);
     </div>
     <div class="ghdr-right">
       <span class="diff-badge easy" id="diff-label">Easy</span>
-      <button id="sndbtn" class="on">
-        <svg viewBox="0 0 24 24">
-          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-          <path class="wave-path" d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
-          <path class="wave-path" d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
-          <line class="mute-x" x1="3" y1="3" x2="21" y2="21" stroke-width="2.5"/>
-        </svg>
-      </button>
+      <button id="sndbtn" class="on"><svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></button>
     </div>
   </div>
 
@@ -606,15 +610,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);
         <button class="back-btn" id="twop-back">←</button>
         <div class="glogo">2 Player Mode</div>
       </div>
-      <button id="sndbtn2" class="on" style="width:32px;height:32px;border-radius:999px;
-        border:1.5px solid var(--rim);background:rgba(255,255,255,.04);
-        display:flex;align-items:center;justify-content:center;cursor:pointer">
-        <svg viewBox="0 0 24 24" style="width:15px;height:15px;fill:none;stroke:var(--sky);stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
-          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
-          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
-        </svg>
-      </button>
+      <button id="sndbtn2" class="on"><svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></button>
     </div>
     <div class="twop-qrow">
       <div class="twop-qtxt" id="twop-qtxt">5 × 3 = ?</div>
@@ -720,14 +716,18 @@ html,body{height:100%;overflow:hidden;background:var(--bg);
 ═══════════════════════════════════════════════════════ */
 let AC=null, sndOn=true;
 
-function toggleSnd(btnId){
+const SND_ICON_ON  = '<svg viewBox=\"0 0 24 24\"><polygon points=\"11 5 6 9 2 9 2 15 6 15 11 19 11 5\"/><path d=\"M15.54 8.46a5 5 0 0 1 0 7.07\"/><path d=\"M19.07 4.93a10 10 0 0 1 0 14.14\"/></svg>';
+const SND_ICON_OFF = '<svg viewBox=\"0 0 24 24\"><polygon points=\"11 5 6 9 2 9 2 15 6 15 11 19 11 5\"/><line x1=\"3\" y1=\"3\" x2=\"21\" y2=\"21\"/></svg>';
+function toggleSnd(){
   sndOn=!sndOn;
+  // Immediately stop any speech that is currently playing
+  if('speechSynthesis' in window) speechSynthesis.cancel();
   document.querySelectorAll('#sndbtn,#sndbtn2').forEach(b=>{
-    b.classList.toggle('on',sndOn);
+    b.classList.toggle('on', sndOn);
     b.classList.toggle('off',!sndOn);
+    b.innerHTML = sndOn ? SND_ICON_ON : SND_ICON_OFF;
   });
 }
-document.getElementById('sndbtn').addEventListener('click',()=>toggleSnd());
 
 function getAC(){if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();return AC;}
 function tone(freq,t0,dur,vol,type,atk){
@@ -793,6 +793,7 @@ if('speechSynthesis' in window){
 let qStr='';
 function speak(){
   if(!('speechSynthesis' in window))return;
+  if(!sndOn){speechSynthesis.cancel();return;}
   speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(qStr);
   u.rate=.88;u.pitch=1.2;
@@ -966,9 +967,7 @@ let best      = load('best',0);
 let timerRaf  = null;
 let timerStart= 0;
 let timerLeft = TIMER_SEC;
-let lastAnswerTime = 0;
 let isDaily   = false;
-let dailyDone = false;
 
 // Difficulty controls which table buttons are shown + question range
 const DIFF_CFG={
@@ -995,7 +994,6 @@ document.querySelectorAll('.mode-card').forEach(c=>{
     c.classList.add('sel');
     mode=c.dataset.m;
     playTick();
-    if(mode==='twoplayer'){startTwoPlayer();return;}
   });
 });
 document.getElementById('play-btn').addEventListener('click',()=>{
@@ -1010,7 +1008,6 @@ document.getElementById('daily-btn').addEventListener('click',()=>{
   const savedDaily=load('daily_done','');
   if(savedDaily===today){
     showToast("Today's challenge already done! 🌟",'gold');
-    setTimeout(()=>{},0);
     return;
   }
   diff='medium'; mode='classic';
@@ -1117,7 +1114,6 @@ function setQ(){
   ans=a*b;
   qStr=`What is ${a} times ${b}?`;
   document.getElementById('qtxt').textContent=`${a} × ${b} = ?`;
-  lastAnswerTime=Date.now();
 }
 
 /* ─── SMART DISTRACTOR POOL ─── */
@@ -1129,10 +1125,10 @@ function distractors(exclude, need){
   // If pool is too small, pad with nearby multiples so numbers look plausible
   if(base.length < need){
     const extra=new Set(base);
-    for(let a=1;a<=cfg.maxTable+4;a++)
+    outer: for(let a=1;a<=cfg.maxTable+4;a++)
       for(let b=1;b<=cfg.maxMult+4;b++){
         extra.add(a*b);
-        if(extra.size-1 >= need+5) break; // -1 for potential exclude
+        if(extra.size >= need+6) break outer;
       }
     base=Array.from(extra).filter(n=>n!==exclude);
   }
@@ -1258,7 +1254,7 @@ function tap(i){
     updateStats();
     showToast('+'+pts+' ✓',false);
     stopTimer();
-    if(!checkBingo()) setTimeout(()=>nextQ(timeLeft),650);
+    if(!checkBingo()) setTimeout(nextQ,650);
   } else {
     streak=0; wrongCount++;
     updateStats();
@@ -1305,7 +1301,7 @@ function updateStats(){
 }
 
 /* ─── NEXT QUESTION ─── */
-function nextQ(lastTimeLeft){
+function nextQ(){
   if(over)return;
   setQ();
   refreshUnmarked();
@@ -1424,6 +1420,7 @@ function twopSetQ(){
   document.getElementById('twop-qtxt').textContent=`${a} × ${b} = ?`;
   setTimeout(()=>{
     if(!('speechSynthesis' in window))return;
+    if(!sndOn){speechSynthesis.cancel();return;}
     speechSynthesis.cancel();
     const u=new SpeechSynthesisUtterance(tp.qStr);
     u.rate=.88;u.pitch=1.2;
@@ -1554,6 +1551,7 @@ document.getElementById('twop-nxt').addEventListener('click',()=>{
 document.getElementById('twop-new').addEventListener('click',startTwoPlayer);
 document.getElementById('twop-rbtn').addEventListener('click',()=>{
   if(!('speechSynthesis' in window))return;
+  if(!sndOn){speechSynthesis.cancel();return;}
   speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(tp.qStr);u.rate=.88;u.pitch=1.2;
   const v=voices.length?voices:speechSynthesis.getVoices();
