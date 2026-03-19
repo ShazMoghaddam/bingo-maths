@@ -1,5 +1,7 @@
 # Bingo Maths! — PWA → Google Play Store Guide
 
+🎮 [Play now →](https://ShazMoghaddam.github.io/bingo-maths/)
+
 ## Your App Files
 ```
 bingo-maths/
